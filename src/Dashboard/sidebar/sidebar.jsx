@@ -20,10 +20,7 @@ const Sidebar = () => {
             <br />
             <br />
             <br />
-            <br />
-            <br />
-            <br />
-            <br />
+
             <i className="fa fa-reply-all mt-5 mb-4" onClick={()=>{signOut(auth)}}></i>
         </div>
     )

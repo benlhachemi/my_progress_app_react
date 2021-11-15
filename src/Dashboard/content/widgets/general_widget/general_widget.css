@@ -1,0 +1,14 @@
+.General_widget .task{
+    background: rgba(0,0,0,0.4);
+    padding: 10px 0px;
+    border-radius: 4px;
+}
+
+.General_widget .week,.General_widget .month{
+    width:100%;
+}
+
+.General_widget .progress{
+    height: 10px!important;
+    background: rgb(255 255 255 / 20%);
+}
