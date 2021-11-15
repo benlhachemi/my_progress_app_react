@@ -1,0 +1,22 @@
+.Sidebar{
+    border-right: 2px solid #504466;
+    text-align: center;
+    width:6%;
+    height:200vw;
+}
+
+.Sidebar .logo{
+    cursor:pointer
+}
+
+.Sidebar i{
+    color: #8b7ca7;
+    font-size: 50px;
+    cursor: pointer;
+}
+
+.Sidebar i:hover{
+    color:#463468;
+}
+
+
