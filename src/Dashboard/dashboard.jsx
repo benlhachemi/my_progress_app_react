@@ -1,15 +1,22 @@
 import React from 'react'
 import './dashboard.css'
+import Add_page from './add_page/add_page'
 import Navbar from './navbar/navbar'
 import Sidebar from './sidebar/sidebar'
 import Content from './content/content'
+import { Routes, Route, Link, BrowserRouter } from "react-router-dom";
 
 const Dashboard = ({user}) => {
     return (
         <div className='Dashboard'>
             <div className='d-flex'>
                 <Sidebar />
-                <Content user={user}/>
+                <BrowserRouter>
+                    <Routes>
+                        <Route path="/" element={<Content user={user}/>} />
+                        <Route path="/add" element={<Add_page user={user}/>} />
+                    </Routes>
+                </BrowserRouter>
             </div>
         </div>
     )

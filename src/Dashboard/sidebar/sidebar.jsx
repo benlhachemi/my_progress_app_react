@@ -9,9 +9,9 @@ const Sidebar = () => {
         <div className='Sidebar'>
             <img src="https://i.imgur.com/zFAbyWt.png" width="70%" alt="" className="logo mt-4 mb-5" />
             <br />
-            <i className="fa fa-home mt-5 mb-4"></i>
+            <a href="/"><i className="fa fa-home mt-5 mb-4"></i></a>
             <br />
-            <i className="fa fa-plus-square-o mt-5 mb-4"></i>
+            <a href="/add"><i className="fa fa-plus-square-o mt-5 mb-4"></i></a>
             <br />
             <i className="fa fa-line-chart mt-5 mb-4"></i>
             <br />
