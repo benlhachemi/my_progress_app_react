@@ -7,7 +7,7 @@ var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'S
 var months = ['January', 'February', 'Mars', 'April','May', 'June', 'July', 'August','September','October','November','December'];
 const today_name = days[d.getDay()];
 const today_month = d.getDate();
-const month_name = months[d.getMonth() - 1];
+const month_name = months[(d.getMonth()+1) - 1];
 const meteo_api = "https://api.weatherapi.com/v1/current.json?key=14800a08de8849649fd190453211511&q=Agadir&aqi=no";
 
 
@@ -15,6 +15,14 @@ const meteo_api = "https://api.weatherapi.com/v1/current.json?key=14800a08de8849
 //functions
 const generate_id = ()=>{
     return Math.floor(Math.random()*999999999);
+}
+
+const get_today_date = ()=>{
+    return ("0" + (d.getMonth() + 1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" +d.getFullYear();
+}
+
+const get_month_name = (month)=>{
+    return months[(month+1)-1];
 }
 
 
@@ -35,12 +43,12 @@ const get_today_meteo_icon = async()=>{
 
 const week_progress = ()=>{
     switch(d.getDay()){
-        case 1 : return 0;
-        case 2 : return 15;
-        case 3 : return 30;
-        case 4 : return 45;
-        case 5 : return 60;
-        case 6 : return 75;
+        case 1 : return 15;
+        case 2 : return 30;
+        case 3 : return 45;
+        case 4 : return 60;
+        case 5 : return 75;
+        case 6 : return 90;
         case 0 : return 100;
     }
 }
@@ -84,6 +92,8 @@ const month_progress = ()=>{
 
 
 
+
+
 //main variable
 const Variables = {
     today_full_date : d,
@@ -92,7 +102,8 @@ const Variables = {
     today_meteo_icon : get_today_meteo_icon(),
     week_progress : week_progress() + '%',
     month_progress : month_progress() + '%',
-    generate_id : generate_id()
+    generate_id : generate_id(),
+    get_today_date : get_today_date()
 }
 
 

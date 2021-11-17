@@ -5,7 +5,7 @@ const General_widget = (props) => {
     return (
         <div className='General_widget'>
             
-                <h3 className="text-light text-center mt-2" >Today is {props.date}</h3>
+                <h5 className="text-light text-center mt-2" >Today is {props.date}</h5>
                 
                 
                     <h1 className="text-warning text-center" >{props.meteo_degree}</h1>
@@ -20,13 +20,13 @@ const General_widget = (props) => {
                 <div className="week text-light text-center mr-2">
                     <h6 className="text-light text-center">Week : </h6>
                     <div className="progress">
-                        <div className="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style={{width: props.week}}></div>
+                        <div className="progress-bar progress-bar-striped progress-bar-animated bg-dark" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style={{width: props.week}}></div>
                     </div>
                 </div>
                 <div className="month text-light text-center ml-2">
                     <h6 className="text-light text-center">Month : </h6>
                     <div className="progress">
-                            <div className="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style={{width: props.month}}></div>
+                            <div className="progress-bar progress-bar-striped progress-bar-animated bg-dark" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style={{width: props.month}}></div>
                     </div>
                 </div>
             </div>

@@ -9,6 +9,7 @@ import {Button,TextField ,Dialog ,DialogActions ,DialogContent ,DialogContentTex
 //global variables
 const db = getFirestore();
 const todosRef = collection(db, "todos");
+const calendarsRef = collection(db, "calendars");
 
 
 const Add_page = ({user}) => {
@@ -16,28 +17,70 @@ const Add_page = ({user}) => {
     const [openAddTask, setOpenAddTask] = useState(false);
     const clickOpenAddTask = () => {setOpenAddTask(true);};
     const clickCloseAddTask = () => {setOpenAddTask(false);};
+
+    const [openAddCalendar, setOpenAddCalendar] = useState(false);
+    const clickOpenAddCalendar = () => {setOpenAddCalendar(true);};
+    const clickCloseAddCalendar = () => {setOpenAddCalendar(false);};
+
+    const [calendarEndTime,setCalendarEndTime] = useState('');
+    const [calendarDescription,setCalendarDescription] = useState('');
+    const [calendarImportance,setCalendarImportance] = useState('');
+
     const [openDeleteTask, setOpenDeleteTask] = useState(false);
     const clickOpenDeleteTask = () => {setOpenDeleteTask(true);};
     const clickCloseDeleteTask = () => {setOpenDeleteTask(false);};
+
+    const [openDeleteCalendar, setOpenDeleteCalendar] = useState(false);
+    const clickOpenDeleteCalendar = () => {setOpenDeleteCalendar(true);};
+    const clickCloseDeleteCalendar = () => {setOpenDeleteCalendar(false);};
+
     const [new_task,setNewTask] = useState('');
+
     const [openAddTaskAlert, setOpenAddTaskAlert] = useState(false);
     const handleClickOpenAddTaskAlert = () => {setOpenAddTaskAlert(true);};
     const handleCloseOpenAddTaskAlert = (event, reason) => {if (reason === 'clickaway') {return;}setOpenAddTaskAlert(false);};
 
+    const [openAddCalendarAlert, setOpenAddCalendarAlert] = useState(false);
+    const handleClickOpenAddCalendarAlert = () => {setOpenAddCalendarAlert(true);};
+    const handleCloseOpenAddCalendarAlert = (event, reason) => {if (reason === 'clickaway') {return;}setOpenAddCalendarAlert(false);};
+
 
     //Hooks & local variables
     const todosQuery = query(todosRef, where("uid", "==", user.uid));
+    const calendarsQuery = query(calendarsRef, where("uid", "==", user.uid));
     const [todos, todos_loading] = useCollectionData(todosQuery);
+    const [calendars, calendars_loading] = useCollectionData(calendarsQuery);
     
 
     //functions
+    const get_difference = (today,date)=>{
+        const date1 = new Date(today);
+        const date2 = new Date(date);
+        const diffTime = date2 - date1;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+        return diffDays - 1;
+    }
+
+    const add_new_calendar = async()=>{
+        setDoc(doc(calendarsRef),{
+            uid : user.uid,
+            calendar_id : Math.floor(Math.random()*999999999),
+            calendar_description : calendarDescription,
+            calendar_importance : calendarImportance,
+            calendar_end_time : calendarEndTime[5] + calendarEndTime[6] + "/" + calendarEndTime[8] + calendarEndTime[9] + "/" + calendarEndTime[0] + calendarEndTime[1] + calendarEndTime[2] + calendarEndTime[3]
+        });
+        clickCloseAddCalendar();
+        handleClickOpenAddCalendarAlert();
+    }
+
     const add_new_task = async()=>{
         setDoc(doc(todosRef),{
             uid : user.uid,
-            todo_id : Variables.generate_id,
+            todo_id : Math.floor(Math.random()*999999999),
             todo : new_task,
             done : false,
-            color : 'text-light'
+            color : 'text-light',
+            date_created : Variables.get_today_date
         });
         setOpenAddTask(false);
         handleClickOpenAddTaskAlert();
@@ -49,6 +92,15 @@ const Add_page = ({user}) => {
         var temp_doc_id = '';
         querySnapshot.forEach((elt)=>{temp_doc_id = elt.id});
         await deleteDoc(doc(db,"todos",temp_doc_id));
+    }
+
+
+    const delete_calendar = async(id)=>{
+        const query_to_delete = query(calendarsRef, where("calendar_id", "==", id));
+        const querySnapshot = await getDocs(query_to_delete);
+        var temp_doc_id = '';
+        querySnapshot.forEach((elt)=>{temp_doc_id = elt.id});
+        await deleteDoc(doc(db,"calendars",temp_doc_id));
     }
 
 
@@ -90,7 +142,7 @@ const Add_page = ({user}) => {
                             <DialogContentText>Please choose from the list below the task that you want to delete then click "Delete"</DialogContentText><br />
                             <div class="list-group">
                                 {!todos_loading && todos.map((elt)=>(
-                                    <div key={todos.todo_id} className='d-flex'><a className="list-group-item list-group-item-action active bg-secondary rounded mb-2">{elt.todo} </a><button onClick={()=>{delete_task(elt.todo_id)}} className="btn btn-danger ml-2 mb-2 rounded"><i className="fa fa-remove"></i></button></div>
+                                    <div key={elt.todo_id} className='d-flex'><a className="list-group-item list-group-item-action active bg-secondary rounded mb-2">{elt.todo} </a><button onClick={()=>{delete_task(elt.todo_id)}} className="btn btn-danger ml-2 mb-2 rounded"><i className="fa fa-remove"></i></button></div>
                                 ))}
                             </div>
                         </DialogContent>
@@ -109,8 +161,58 @@ const Add_page = ({user}) => {
                 {/* CALENDAR CRUD */}
                 <div className="col-4 text-center text-light">
                     <i className="fa fa-calendar mb-5" style={{fontSize : "70px"}}></i><br />
-                    <button className="btn btn-primary mt-5 mb-4"><i className="fa fa-plus mr-3"></i> Add Calendar</button><br />
-                    <button className="btn btn-primary mt-5 mb-4"><i className="fa fa-remove mr-3"></i>Remove Calendar</button><br /><br />
+
+                    <button onClick={clickOpenAddCalendar} className="btn btn-primary mt-5 mb-4"><i className="fa fa-plus mr-3"></i> Add Calendar</button><br />
+                    <Dialog open={openAddCalendar} onClose={clickCloseAddCalendar}>
+                        <DialogTitle>Add new calendar</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>Please enter the calendar description + date, then click on add calendar : </DialogContentText>
+                            <div className="row mt-4">
+                                <div className="col-3"><h6 className="text-center mt-2"><span className='mr-2'>end time</span> <i className="fa fa-clock-o"></i></h6></div>
+                                <div className="col-9"><input type="date" className='form-control' onChange={(e)=>{setCalendarEndTime(e.target.value)}}/></div>
+                            </div>
+                            <hr />
+                            <div className="row mt-4">
+                                <div className="col-3"><h6 className="text-center mt-2"><span className='mr-2'>Details</span> <i className="fa fa-align-center"></i></h6></div>
+                                <div className="col-9"><input type="text" className='form-control' onChange={(e)=>{setCalendarDescription(e.target.value)}} placeholder="enter the description of your calendar ..." /></div>
+                            </div>
+                            <hr />
+                            <div className="row mt-4">
+                                <div className="col-3"><h6 className="text-center"><span className='mr-2'>How important is your calendar ?</span></h6></div>
+                                <div className="col-3 text-center">not important <br /><input type="radio" name='importance' value="table-active" onChange={(e)=>{setCalendarImportance(e.target.value)}}/></div>
+                                <div className="col-3 text-center">important <br /><input type="radio" name='importance' value="table-warning" onChange={(e)=>{setCalendarImportance(e.target.value)}}/></div>
+                                <div className="col-3 text-center">very important <br /><input type="radio" name='importance' value="table-danger" onChange={(e)=>{setCalendarImportance(e.target.value)}}/></div>
+                            </div>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={clickCloseAddCalendar}>Cancel</Button>
+                            {calendarEndTime !== '' && get_difference(Variables.get_today_date,calendarEndTime) > 0 &&
+                                calendarDescription !== '' && 
+                                    calendarImportance !== '' && <Button onClick={add_new_calendar}>Add calendar</Button>
+                            }
+                        </DialogActions>
+                    </Dialog>
+                    <Stack spacing={2} sx={{ width: '100%' }}>
+                        <Snackbar open={openAddCalendarAlert} autoHideDuration={6000} onClose={handleCloseOpenAddCalendarAlert}>
+                            <Alert onClose={handleClickOpenAddCalendarAlert} severity="success" sx={{ width: '100%' }}>New calendar added succesfuly! 👍</Alert>
+                        </Snackbar>
+                    </Stack>
+
+                    <button onClick={clickOpenDeleteCalendar} className="btn btn-primary mt-5 mb-4"><i className="fa fa-remove mr-3"></i>Remove Calendar</button><br /><br />
+                    <Dialog open={openDeleteCalendar} onClose={clickCloseDeleteCalendar}>
+                        <DialogTitle>Delete Calendar</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>Please choose from the list below the calendar that you want to delete then click "Delete"</DialogContentText><br />
+                            <div class="list-group">
+                                {!calendars_loading && calendars.map((elt)=>(
+                                    <div key={elt.calendar_id} className='d-flex'><a className="list-group-item list-group-item-action active bg-secondary rounded mb-2">{elt.calendar_description} </a><button onClick={()=>{delete_calendar(elt.calendar_id)}} className="btn btn-danger ml-2 mb-2 rounded"><i className="fa fa-remove"></i></button></div>
+                                ))}
+                            </div>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={clickCloseDeleteCalendar}>Cancel</Button>
+                        </DialogActions>
+                    </Dialog>
                 </div>
 
 
