@@ -21,6 +21,12 @@ const get_today_date = ()=>{
     return ("0" + (d.getMonth() + 1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" +d.getFullYear();
 }
 
+const get_yesterday_date = ()=>{
+    var date = new Date();
+    date.setDate(date.getDate() - 1);
+    return ("0" + (date.getMonth() + 1)).slice(-2) + "/" + ("0" + date.getDate()).slice(-2) + "/" +date.getFullYear();
+}
+
 const get_month_name = (month)=>{
     return months[(month+1)-1];
 }
@@ -103,7 +109,8 @@ const Variables = {
     week_progress : week_progress() + '%',
     month_progress : month_progress() + '%',
     generate_id : generate_id(),
-    get_today_date : get_today_date()
+    get_today_date : get_today_date(),
+    get_yesterday_date : get_yesterday_date()
 }
 
 

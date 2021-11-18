@@ -6,10 +6,12 @@ import { getFirestore, collection, getDocs, query, where, doc, setDoc ,updateDoc
 import Variables from '../../variables';
 import {Button,TextField ,Dialog ,DialogActions ,DialogContent ,DialogContentText ,DialogTitle,MuiAlert ,Snackbar ,Stack, Alert  } from '@mui/material';
 
+
 //global variables
 const db = getFirestore();
 const todosRef = collection(db, "todos");
 const calendarsRef = collection(db, "calendars");
+const goalsRef = collection(db, "goals");
 
 
 const Add_page = ({user}) => {
@@ -21,6 +23,10 @@ const Add_page = ({user}) => {
     const [openAddCalendar, setOpenAddCalendar] = useState(false);
     const clickOpenAddCalendar = () => {setOpenAddCalendar(true);};
     const clickCloseAddCalendar = () => {setOpenAddCalendar(false);};
+
+    const [openAddGoal, setOpenAddGoal] = useState(false);
+    const clickOpenAddGoal = () => {setOpenAddGoal(true);};
+    const clickCloseAddGoal = () => {setOpenAddGoal(false);};
 
     const [calendarEndTime,setCalendarEndTime] = useState('');
     const [calendarDescription,setCalendarDescription] = useState('');
@@ -34,6 +40,10 @@ const Add_page = ({user}) => {
     const clickOpenDeleteCalendar = () => {setOpenDeleteCalendar(true);};
     const clickCloseDeleteCalendar = () => {setOpenDeleteCalendar(false);};
 
+    const [openDeleteGoal, setOpenDeleteGoal] = useState(false);
+    const clickOpenDeleteGoal = () => {setOpenDeleteGoal(true);};
+    const clickCloseDeleteGoal = () => {setOpenDeleteGoal(false);};
+
     const [new_task,setNewTask] = useState('');
 
     const [openAddTaskAlert, setOpenAddTaskAlert] = useState(false);
@@ -44,12 +54,28 @@ const Add_page = ({user}) => {
     const handleClickOpenAddCalendarAlert = () => {setOpenAddCalendarAlert(true);};
     const handleCloseOpenAddCalendarAlert = (event, reason) => {if (reason === 'clickaway') {return;}setOpenAddCalendarAlert(false);};
 
+    const [openAddGoalAlert, setOpenAddGoalAlert] = useState(false);
+    const handleClickOpenAddGoalAlert = () => {setOpenAddGoalAlert(true);};
+    const handleCloseOpenAddGoalAlert = (event, reason) => {if (reason === 'clickaway') {return;}setOpenAddGoalAlert(false);};
+
+    const [goal_name,setGoalName] = useState('');
+    const [variable_1_name,setVariable1Name] = useState('');
+    const [variable_2_name,setVariable2Name] = useState('');
+    const [variable_3_name,setVariable3Name] = useState('');
+    const [variable_4_name,setVariable4Name] = useState('');
+    const [variable_1_prefix,setVariable1Prefix] = useState('');
+    const [variable_2_prefix,setVariable2Prefix] = useState('');
+    const [variable_3_prefix,setVariable3Prefix] = useState('');
+    const [variable_4_prefix,setVariable4Prefix] = useState('');
+
 
     //Hooks & local variables
     const todosQuery = query(todosRef, where("uid", "==", user.uid));
     const calendarsQuery = query(calendarsRef, where("uid", "==", user.uid));
+    const goalsQuery = query(goalsRef, where("uid", "==", user.uid));
     const [todos, todos_loading] = useCollectionData(todosQuery);
     const [calendars, calendars_loading] = useCollectionData(calendarsQuery);
+    const [goals, goals_loading] = useCollectionData(goalsQuery);
     
 
     //functions
@@ -59,6 +85,48 @@ const Add_page = ({user}) => {
         const diffTime = date2 - date1;
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
         return diffDays - 1;
+    }
+
+    const add_new_goal = async()=>{
+        var temp_variables = [];
+        temp_variables.push({
+            variable_id : Math.floor(Math.random()*999999999),
+            variable_name : variable_1_name,
+            variable_prefix : variable_1_prefix,
+            variable_data : []
+        });
+        if(variable_2_name !== ''){
+            temp_variables.push({
+                variable_id : Math.floor(Math.random()*999999999),
+                variable_name : variable_2_name,
+                variable_prefix : variable_2_prefix,
+                variable_data : []
+            });
+        }
+        if(variable_3_name !== ''){
+            temp_variables.push({
+                variable_id : Math.floor(Math.random()*999999999),
+                variable_name : variable_3_name,
+                variable_prefix : variable_3_prefix,
+                variable_data : []
+            });
+        }
+        if(variable_4_name !== ''){
+            temp_variables.push({
+                variable_id : Math.floor(Math.random()*999999999),
+                variable_name : variable_4_name,
+                variable_prefix : variable_4_prefix,
+                variable_data : []
+            });
+        }
+        setDoc(doc(goalsRef),{
+            uid : user.uid,
+            goal_id : Math.floor(Math.random()*999999999),
+            goal_name : goal_name,
+            goal_variables : temp_variables
+        });
+        clickCloseAddGoal();
+        handleClickOpenAddGoalAlert();
     }
 
     const add_new_calendar = async()=>{
@@ -101,6 +169,15 @@ const Add_page = ({user}) => {
         var temp_doc_id = '';
         querySnapshot.forEach((elt)=>{temp_doc_id = elt.id});
         await deleteDoc(doc(db,"calendars",temp_doc_id));
+    }
+
+
+    const delete_goal = async(id)=>{
+        const query_to_delete = query(goalsRef, where("goal_id", "==", id));
+        const querySnapshot = await getDocs(query_to_delete);
+        var temp_doc_id = '';
+        querySnapshot.forEach((elt)=>{temp_doc_id = elt.id});
+        await deleteDoc(doc(db,"goals",temp_doc_id));
     }
 
 
@@ -221,8 +298,62 @@ const Add_page = ({user}) => {
                 {/* GOAL CRUD */}
                 <div className="col-4 text-center text-light" style={{borderLeft : "2px solid rgba(255,255,255,0.2)"}}>
                     <i className="fa fa-bullseye mb-5" style={{fontSize : "70px"}}></i><br />
-                    <button className="btn btn-primary mt-5 mb-4"><i className="fa fa-plus mr-3"></i> Add Goal</button><br />
-                    <button className="btn btn-primary mt-5 mb-4"><i className="fa fa-remove mr-3"></i>Remove Goal</button><br /><br />
+                    <button onClick={clickOpenAddGoal} className="btn btn-primary mt-5 mb-4"><i className="fa fa-plus mr-3"></i> Add Goal</button><br />
+                    <Dialog open={openAddGoal} onClose={clickCloseAddGoal}>
+                        <DialogTitle>Add new Goal</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>Please enter your Goal details(goal name + goal variables) to add the goal to your list.You can add max 4 variables and at least 1 variable should be entered </DialogContentText>
+                            <TextField autoFocus onChange={(e)=>{setGoalName(e.target.value)}} margin="dense" id="name" label="Goal Name" type="text" fullWidth variant="standard"/><br />
+                            <div className="row mb-1">
+                                <div className="col-8"><TextField onChange={(e)=>{setVariable1Name(e.target.value)}} margin="dense" id="name" label="variable name" type="text" fullWidth variant="standard"/></div>
+                                <div className="col-4"><TextField onChange={(e)=>{setVariable1Prefix(e.target.value)}} margin="dense" id="name" label="variable prefix name" type="text" fullWidth variant="standard"/></div>
+                            </div>
+
+                            <div className="row mb-1">
+                                <div className="col-8"><TextField onChange={(e)=>{setVariable2Name(e.target.value)}} margin="dense" id="name" label="variable name" type="text" fullWidth variant="standard"/></div>
+                                <div className="col-4"><TextField onChange={(e)=>{setVariable2Prefix(e.target.value)}} margin="dense" id="name" label="variable prefix name" type="text" fullWidth variant="standard"/></div>
+                            </div>
+
+                            <div className="row mb-1">
+                                <div className="col-8"><TextField onChange={(e)=>{setVariable3Name(e.target.value)}} margin="dense" id="name" label="variable name" type="text" fullWidth variant="standard"/></div>
+                                <div className="col-4"><TextField onChange={(e)=>{setVariable3Prefix(e.target.value)}} margin="dense" id="name" label="variable prefix name" type="text" fullWidth variant="standard"/></div>
+                            </div>
+
+                            <div className="row mb-1">
+                                <div className="col-8"><TextField onChange={(e)=>{setVariable4Name(e.target.value)}} margin="dense" id="name" label="variable name" type="text" fullWidth variant="standard"/></div>
+                                <div className="col-4"><TextField onChange={(e)=>{setVariable4Prefix(e.target.value)}} margin="dense" id="name" label="variable prefix name" type="text" fullWidth variant="standard"/></div>
+                            </div>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={clickCloseAddGoal}>Cancel</Button>
+                            {goal_name !== '' &&
+                                variable_1_name !== '' &&
+                                    variable_1_prefix !== '' &&
+                                        <Button onClick={add_new_goal}>Add</Button>
+                            }
+                        </DialogActions>
+                    </Dialog>
+                    <Stack spacing={2} sx={{ width: '100%' }}>
+                        <Snackbar open={openAddGoalAlert} autoHideDuration={6000} onClose={handleCloseOpenAddGoalAlert}>
+                            <Alert onClose={handleClickOpenAddGoalAlert} severity="success" sx={{ width: '100%' }}>New goal added succesfuly! 👍</Alert>
+                        </Snackbar>
+                    </Stack>
+
+                    <button onClick={clickOpenDeleteGoal} className="btn btn-primary mt-5 mb-4"><i className="fa fa-remove mr-3"></i>Remove Goal</button><br /><br />
+                    <Dialog open={openDeleteGoal} onClose={clickCloseDeleteGoal}>
+                        <DialogTitle>Delete Goal</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>Please choose from the list below the goal that you want to delete then click "Delete"</DialogContentText><br />
+                            <div class="list-group">
+                                {!goals_loading && goals.map((elt)=>(
+                                    <div key={elt.goal_id} className='d-flex'><a className="list-group-item list-group-item-action active bg-secondary rounded mb-2">{elt.goal_name} </a><button onClick={()=>{delete_goal(elt.goal_id)}} className="btn btn-danger ml-2 mb-2 rounded"><i className="fa fa-remove"></i></button></div>
+                                ))}
+                            </div>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={clickCloseDeleteGoal}>Cancel</Button>
+                        </DialogActions>
+                    </Dialog>
                 </div>
             </div>
         </div>

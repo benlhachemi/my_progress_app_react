@@ -13,9 +13,9 @@ const Sidebar = () => {
             <br />
             <a href="/add"><i className="fa fa-plus-square-o mt-5 mb-4"></i></a>
             <br />
-            <i className="fa fa-line-chart mt-5 mb-4"></i>
+            <a href="/goals"><i className="fa fa-crosshairs mt-5 mb-5"></i></a>
             <br />
-            <i className="fa fa-crosshairs mt-5 mb-5"></i>
+            <i className="fa fa-line-chart mt-5 mb-4"></i>
             <br />
             <br />
             <br />
