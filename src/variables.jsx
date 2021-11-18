@@ -18,13 +18,13 @@ const generate_id = ()=>{
 }
 
 const get_today_date = ()=>{
-    return ("0" + (d.getMonth() + 1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" +d.getFullYear();
+    return ("0" + (d.getMonth() + 1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" + d.getFullYear();
 }
 
 const get_yesterday_date = ()=>{
     var date = new Date();
     date.setDate(date.getDate() - 1);
-    return ("0" + (date.getMonth() + 1)).slice(-2) + "/" + ("0" + date.getDate()).slice(-2) + "/" +date.getFullYear();
+    return ("0" + (date.getMonth() + 1)).slice(-2) + "/" + ("0" + date.getDate()).slice(-2) + "/" + date.getFullYear();
 }
 
 const get_month_name = (month)=>{
@@ -96,6 +96,30 @@ const month_progress = ()=>{
 }
 
 
+const get_last_monday_date = ()=>{
+    if(days[d.getDay()] === 'Monday'){
+        return get_today_date;
+    }
+    else{
+        var temp_date = new Date();
+        switch(days[d.getDay()]){
+            case 'Sunday' : temp_date.setDate(temp_date.getDate() - 6);return ("0" + (temp_date.getMonth() + 1)).slice(-2) + "/" + ("0" + temp_date.getDate()).slice(-2) + "/" +temp_date.getFullYear();break;
+            case 'Tuesday' : temp_date.setDate(temp_date.getDate() - 1);return ("0" + (temp_date.getMonth() + 1)).slice(-2) + "/" + ("0" + temp_date.getDate()).slice(-2) + "/" +temp_date.getFullYear();break;
+            case 'Wednesday' : temp_date.setDate(temp_date.getDate() - 2);return ("0" + (temp_date.getMonth() + 1)).slice(-2) + "/" + ("0" + temp_date.getDate()).slice(-2) + "/" +temp_date.getFullYear();break;
+            case 'Thursday' : temp_date.setDate(temp_date.getDate() - 3);return ("0" + (temp_date.getMonth() + 1)).slice(-2) + "/" + ("0" + temp_date.getDate()).slice(-2) + "/" +temp_date.getFullYear();break;
+            case 'Friday' : temp_date.setDate(temp_date.getDate() - 4);return ("0" + (temp_date.getMonth() + 1)).slice(-2) + "/" + ("0" + temp_date.getDate()).slice(-2) + "/" +temp_date.getFullYear();break;
+            case 'Saturday' : temp_date.setDate(temp_date.getDate() - 5);return ("0" + (temp_date.getMonth() + 1)).slice(-2) + "/" + ("0" + temp_date.getDate()).slice(-2) + "/" +temp_date.getFullYear();break;
+        }
+    }
+}
+
+
+const get_last_week_monday_date = ()=>{
+    var date = new Date(get_last_monday_date());
+    date.setDate(date.getDate() - 7);
+    return ("0" + (date.getMonth() + 1)).slice(-2) + "/" + ("0" + date.getDate()).slice(-2) + "/" + date.getFullYear();
+}
+
 
 
 
@@ -110,7 +134,9 @@ const Variables = {
     month_progress : month_progress() + '%',
     generate_id : generate_id(),
     get_today_date : get_today_date(),
-    get_yesterday_date : get_yesterday_date()
+    get_yesterday_date : get_yesterday_date(),
+    get_last_monday_date : get_last_monday_date(),
+    get_last_week_monday_date : get_last_week_monday_date()
 }
 
 

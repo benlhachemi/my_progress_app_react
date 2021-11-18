@@ -30,7 +30,7 @@ const Goals_page = ({user}) => {
         <div className='Goals_page'>
             <Navbar photoURL={user.photoURL} name={user.displayName} title="my goals"/>
             <div className="container mt-3">
-                <h4 className="text-light mb-5" onChange={(e)=>{get_data_by_date(e.target.value)}}>Show Data for <input type="date"/></h4>
+                <h4 className="text-light mb-5" onChange={(e)=>{get_data_by_date(e.target.value)}}>Show Data for <input value={`${goal_data_date[6]}${goal_data_date[7]}${goal_data_date[8]}${goal_data_date[9]}-${goal_data_date[0]}${goal_data_date[1]}-${goal_data_date[3]}${goal_data_date[4]}`} type="date"/></h4>
                 {!goals_loading && goals.length > 0 && goals.map((elt) => (
                     <div key={elt.goal_id}><br /><Goal goal={elt} goal_data_date={goal_data_date}/><br /><br /></div>
                 ))}

@@ -48,6 +48,7 @@ const Goal = ({goal,goal_data_date}) => {
         var temp_doc_id = '';
         querySnapshot.forEach((elt)=>{temp_doc_id = elt.id});
         await updateDoc(doc(db,"goals",temp_doc_id),{goal_variables : temp_goal_variables});
+        setEditData('');setEditDataId('');
     }
 
     const add_data = async()=>{
@@ -67,6 +68,7 @@ const Goal = ({goal,goal_data_date}) => {
         var temp_doc_id = '';
         querySnapshot.forEach((elt)=>{temp_doc_id = elt.id});
         await updateDoc(doc(db,"goals",temp_doc_id),{goal_variables : temp_goal_variables});
+        setNewData('');setNewDataId('');
     }
 
     const get_data_date = (id)=>{
@@ -99,11 +101,11 @@ const Goal = ({goal,goal_data_date}) => {
                             {edit_data != '' && <Button onClick={update_data}>Update</Button>}
                         </DialogActions>
             </Dialog>
-            <div className="title text-light">{goal.goal_name}</div>
+            <div className="title text-light">{goal.goal_name} <a href={`/analytics/${goal.goal_id}`} style={{fontSize:'12px'}}>Show Details</a></div>
             <div className=" d-flex">
                 {goal.goal_variables.map((elt) =>(
                     <div key={elt.variable_id} className="card text-white text-center mb-3" style={{width:'100%',margin:'0px 10px'}}>
-                        <div className="card-header">{elt.variable_name}</div>
+                        <div className="card-header">{elt.variable_name} </div>
                         <div className="card-body">
                             <div className="card-title">
                                 {get_data_date(elt.variable_id)} 
