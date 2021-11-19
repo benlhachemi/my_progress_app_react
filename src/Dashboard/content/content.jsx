@@ -43,10 +43,13 @@ const Content = ({user}) => {
                     //query_to_delete = query(query_to_delete, where("date_created", "!=", Variables.get_today_date));
                     const querySnapshot = await getDocs(query_to_delete);
                     var temp_doc_id = '';
+                    var isDelete = false;
                     querySnapshot.forEach((elt2)=>{
-                        if(elt2.data().date_created != Variables.get_today_date)temp_doc_id = elt2.id
+                        if(elt2.data().date_created != Variables.get_today_date)temp_doc_id = elt2.id;isDelete = true;
                     });
-                    await deleteDoc(doc(db,"todos",temp_doc_id));
+                    if(isDelete){
+                        await deleteDoc(doc(db,"todos",temp_doc_id));
+                    }
                 }
             });
         }
@@ -90,30 +93,32 @@ const Content = ({user}) => {
     }
 
 
+
+
     return (
         <div className='Content'>
             <Navbar photoURL={user.photoURL} name={user.displayName} title="Home"/>
-            <div className="container-fluid py-3 pl-5 pr-5">
+            <div className="container-fluid">
                 <div className="row">
-                    <div className="col-6 animate__animated animate__bounceInLeft">
+                    <div className="col-12 col-sm-12 col-lg-6 col-md-6 animate__animated animate__bounceInLeft">
                         <div className="widget animated_bg">
                             {todos_loading ? <General_widget date={Variables.general_widget_date} meteo_degree={`${todayMeteo}°C`} meteo_icon={todayMeteoIcon} tasks=' - ' week={Variables.week_progress} month={Variables.month_progress}/> : <General_widget date={Variables.general_widget_date} meteo_degree={`${todayMeteo}°C`} meteo_icon={todayMeteoIcon} tasks={active_todos} week={Variables.week_progress} month={Variables.month_progress}/>}
                         </div>
                     </div>
-                    <div className="col-6 animate__animated animate__bounceInRight">
+                    <div className="col-12 col-sm-12 col-lg-6 col-md-6 animate__animated animate__bounceInRight">
                         <div className="widget">
 
                         </div>
                     </div>
                 </div>
 
-                <div className="row mt-5">
-                    <div className="col-4 animate__animated animate__backInLeft animate__delay-1s">
+                <div className="row mt-2">
+                    <div className="col-lg-4 col-md-4 col-sm-12 col-12 mb-4 animate__animated animate__backInLeft animate__delay-1s">
                         <div className="widget animated_bg_3">
                         {todos_loading ? <h1>Loading</h1> : <Todo tasks={todos} update_todos={update_todos}/>}
                         </div>
                     </div>
-                    <div className="col-8 animate__animated animate__backInUp animate__delay-1s">
+                    <div className="col-lg-8 col-md-8 col-sm-12 col-12 mb-4 animate__animated animate__backInUp animate__delay-1s">
                         <div className="widget animated_bg_2">
                             {!calendars_loading && <Calendar_widget calendars={calendars}/>}
                         </div>

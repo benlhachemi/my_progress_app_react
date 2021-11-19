@@ -1,1 +1,10 @@
+.Dashboard{
+    overflow-x:hidden
+}
+
+.Dashboard .d-flex{
+    justify-content: center;
+}
+
 .Dashboard .col-1{position:fixed;}
+

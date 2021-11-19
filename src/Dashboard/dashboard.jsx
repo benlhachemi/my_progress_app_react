@@ -12,7 +12,7 @@ const Dashboard = ({user}) => {
     return (
         <div className='Dashboard'>
             <div className='d-flex'>
-                <Sidebar />
+                {window.innerWidth > 1024 && <Sidebar />}
                 <BrowserRouter>
                     <Routes>
                         <Route path="/" element={<Content user={user}/>} />
