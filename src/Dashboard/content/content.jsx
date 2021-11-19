@@ -106,8 +106,12 @@ const Content = ({user}) => {
                         </div>
                     </div>
                     <div className="col-12 col-sm-12 col-lg-6 col-md-6 animate__animated animate__bounceInRight">
-                        <div className="widget">
-
+                        <div className="widget text-light">
+                            <h4 className="text-center mt-3 mb-4">App developped By <span className='font-weight-bold text-warning'>Souhail Benlhachemi</span></h4>
+                            <div className="container text-center mt-5">
+                                <h6><i className="fa fa-github mr-3 mb-4"></i> contact@benlhachmi.com</h6>
+                                <h6><i className="fa fa-github mr-3 mb-4"></i> github.com/benlhachemi</h6>
+                            </div>
                         </div>
                     </div>
                 </div>

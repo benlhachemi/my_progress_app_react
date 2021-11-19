@@ -35,6 +35,25 @@ body{
     font-size: 18px;
 }
 
+@media screen and (max-width:600px) {
+	.Login .jumbotron{
+		margin-top:30vw;
+		width: 90%;
+		min-height: 300px;
+	}
+	.Login .btn{
+		border-radius:10px;
+		border-radius: 12px;
+		width: 80%;
+		padding: 20px 	0px;
+		box-shadow: 7px 9px 1px rgb(0 0 0 / 30%);
+		border: 2px solid #261e35;
+		font-size: 18px;
+	}
+}
+
+
+
 .Login img{
 	width: 40px;
     margin-right: 8px;

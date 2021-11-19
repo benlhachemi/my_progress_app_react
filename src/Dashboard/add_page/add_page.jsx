@@ -191,7 +191,7 @@ const Add_page = ({user}) => {
 
 
                 {/* TASK CRUD */}
-                <div className="col-4 text-center text-light" style={{borderRight : "2px solid rgba(255,255,255,0.2)"}}>
+                <div className="col-12 col-lg-4 col-sm-12 mb-5 text-center text-light" style={{borderRight : "2px solid rgba(255,255,255,0.2)"}}>
                     <i className="fa fa-file-text-o mb-5" style={{fontSize : "70px"}}></i><br />
                     {/* ADD TASK */}
                     <button onClick={clickOpenAddTask} className="btn btn-primary mt-5 mb-4"><i className="fa fa-plus mr-3"></i> Add Task</button><br />
@@ -236,7 +236,7 @@ const Add_page = ({user}) => {
 
 
                 {/* CALENDAR CRUD */}
-                <div className="col-4 text-center text-light">
+                <div className="col-12 col-lg-4 col-sm-12 mb-5 text-center text-light">
                     <i className="fa fa-calendar mb-5" style={{fontSize : "70px"}}></i><br />
 
                     <button onClick={clickOpenAddCalendar} className="btn btn-primary mt-5 mb-4"><i className="fa fa-plus mr-3"></i> Add Calendar</button><br />
@@ -296,7 +296,7 @@ const Add_page = ({user}) => {
 
 
                 {/* GOAL CRUD */}
-                <div className="col-4 text-center text-light" style={{borderLeft : "2px solid rgba(255,255,255,0.2)"}}>
+                <div className="col-12 col-lg-4 col-sm-12 mb-5 text-center text-light" style={{borderLeft : "2px solid rgba(255,255,255,0.2)"}}>
                     <i className="fa fa-bullseye mb-5" style={{fontSize : "70px"}}></i><br />
                     <button onClick={clickOpenAddGoal} className="btn btn-primary mt-5 mb-4"><i className="fa fa-plus mr-3"></i> Add Goal</button><br />
                     <Dialog open={openAddGoal} onClose={clickCloseAddGoal}>

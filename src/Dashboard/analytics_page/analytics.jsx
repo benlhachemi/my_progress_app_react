@@ -7,6 +7,7 @@ import { getFirestore, collection, getDocs, query, where, doc, setDoc ,updateDoc
 import Goal from '../goals_page/goal/goal';
 import Variables from '../../variables';
 import { Bar, Line } from 'react-chartjs-2';
+import Loading from '../../loading';
 
 //global variables
 const db = getFirestore();
@@ -16,7 +17,7 @@ const goalsRef = collection(db, "goals");
 const Analytics = ({user}) => {
 
     //variables & hooks
-    const goal_id = useParams().goal_id;
+    const goal_id = Number(useParams().goal_id);
     const goalsQuery = query(goalsRef, where("goal_id", "==", goal_id));
     const [goals, goals_loading] = useCollectionData(goalsQuery);
     const [this_week_chart_data,setThisWeekChartData] = useState();
@@ -63,6 +64,7 @@ const Analytics = ({user}) => {
 
     const check_data_existance = (date1,date2)=>{
         const difference = date_difference(date1,date2);
+        //console.log("difference between " + date1 + " and " + date2 + " is : " + difference);
         var one_date_not_found = true;
 
         if(!goals_loading && goals.length > 0){
@@ -70,20 +72,20 @@ const Analytics = ({user}) => {
 
                 for(var i=1;i<=difference;i++){
     
-                    var date_to_look_for = new Date(Variables.get_today_date);
+                    var date_to_look_for = new Date(date2);
                     date_to_look_for.setDate(date_to_look_for.getDate() - i);
                     const temp_date = ("0" + (date_to_look_for.getMonth() + 1)).slice(-2) + "/" + ("0" + date_to_look_for.getDate()).slice(-2) + "/" + date_to_look_for.getFullYear();
                     var temp_date_found = false;
-    
+
                     elt.variable_data.forEach((elt2)=>{
-                        if(elt2.variable_data_date === temp_date)temp_date_found = true;
+
+                        if(elt2.variable_data_date == temp_date)temp_date_found = true;
                     });
                     
                     if(!temp_date_found)one_date_not_found = false;
                 }
             });
         }
-
         return one_date_not_found;
     }
 
@@ -179,92 +181,103 @@ const Analytics = ({user}) => {
     }
 
 
+    var my_padding = '0';
+    if(window.innerWidth > 1024)my_padding = '0 200px';
+
 
     //main render
     return (
         <div className='Analytics text-light'>
             <Navbar photoURL={user.photoURL} name={user.displayName} title="Analytics"/>
+            {goals_loading ? <Loading /> : 
             <div className="container mt-5">
 
-                {/* THIS WEEK DATA */}
-                <hr className="hr-text mb-5" data-content="THIS WEEK DATA" />
+            {/* THIS WEEK DATA */}
+            <hr className="hr-text mb-5" data-content="THIS WEEK DATA" />
+            
                 
-                    
-                        {!goals_loading && goals.length > 0 && date_difference(Variables.get_last_monday_date,Variables.get_today_date) === 0 ? <h4>The week just started, there is nothing to show at the moment</h4> :
-                            check_data_existance(Variables.get_last_monday_date,Variables.get_today_date) == false ? <h4>Some Data on this week is missing, try go back and add all the missing data to access the analytics</h4> :
-                            <div className="row">
-                            <div className="col-12">
-                                <table className="bg-warning table table-bordered table-striped table-hover text-light">
-                                    <thead>
-                                        <tr>
-                                            <th></th>
-                                            {!goals_loading && goals.length > 0 && goals[0].goal_variables.map((elt,key)=>(
-                                                <th key={key}>{elt.variable_name}</th>
-                                            ))}
-                                        </tr>
-                                        </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>AVG per day</td>
-                                            {!goals_loading && goals.length > 0 && goals[0].goal_variables.map((elt,i) =>(
-                                                <td key={i}>{Math.floor(calculate_avg(elt,Variables.get_last_monday_date,Variables.get_today_date))} {elt.variable_prefix}</td>
-                                            ))}
-                                        </tr>
+                    {!goals_loading && goals.length > 0 && date_difference(Variables.get_last_monday_date,Variables.get_today_date) === 0 ? <h4>The week just started, there is nothing to show at the moment</h4> :
+                        check_data_existance(Variables.get_last_monday_date,Variables.get_today_date) === false ? <h4>Some Data on this week is missing, try go back and add all the missing data to access the analytics</h4> :
+                        <div className="row">
+                        <div className="col-12">
+                            <table className="bg-warning table table-bordered table-striped table-hover text-light">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        {!goals_loading && goals.length > 0 && goals[0].goal_variables.map((elt,key)=>(
+                                            <th key={key}>{elt.variable_name}</th>
+                                        ))}
+                                    </tr>
+                                    </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>AVG per day</td>
+                                        {!goals_loading && goals.length > 0 && goals[0].goal_variables.map((elt,i) =>(
+                                            <td key={i}>{Math.floor(calculate_avg(elt,Variables.get_last_monday_date,Variables.get_today_date))} {elt.variable_prefix}</td>
+                                        ))}
+                                    </tr>
 
-                                        <tr>
-                                            <td>Total this week</td>
-                                            {!goals_loading && goals.length > 0 && goals[0].goal_variables.map((elt,i) =>(
-                                                <td key={i}>{calculate_sum(elt,Variables.get_last_monday_date,Variables.get_today_date)} {elt.variable_prefix}</td>
-                                            ))}
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div className="col-12 mt-3" style={{padding : '0 200px'}}>
-                                {!goals_loading && goals.length > 0 && <Line data ={this_week_chart_data}/>}
-                            </div>
-                            </div>
-                        }
-                    
+                                    <tr>
+                                        <td>Total this week</td>
+                                        {!goals_loading && goals.length > 0 && goals[0].goal_variables.map((elt,i) =>(
+                                            <td key={i}>{calculate_sum(elt,Variables.get_last_monday_date,Variables.get_today_date)} {elt.variable_prefix}</td>
+                                        ))}
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div className="col-12 mt-3" style={{padding : my_padding}}>
+                            <center>
+                            {!goals_loading && goals.length > 0 && window.innerWidth < 1024 && <Line options={{responsive:false}} data ={this_week_chart_data}/> }
+                            {!goals_loading && goals.length > 0 && window.innerWidth > 1024 && <Line options={{responsive:true}} data ={this_week_chart_data}/> }
+                            </center>
+                        </div>
+                        </div>
+                    }
+                
 
-                {/* LAST WEEK DATA */}  
-                <br /><hr className="hr-text mb-5 mt-5" data-content="LAST WEEK DATA" />
-                {!goals_loading && goals.length > 0 && date_difference(Variables.get_last_week_monday_date,Variables.get_last_monday_date) === 0 ? <h4>The week just started, there is nothing to show at the moment</h4> :
-                            check_data_existance(Variables.get_last_week_monday_date,Variables.get_last_monday_date) == false ? <h4>Some Data on this week is missing, try go back and add all the missing data to access the analytics</h4> :
-                            <div className="row">
-                            <div className="col-12">
-                                <table className="bg-warning table table-bordered table-striped table-hover text-light">
-                                    <thead>
-                                        <tr>
-                                            <th></th>
-                                            {!goals_loading && goals.length > 0 && goals[0].goal_variables.map((elt,key)=>(
-                                                <th key={key}>{elt.variable_name}</th>
-                                            ))}
-                                        </tr>
-                                        </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>AVG per day</td>
-                                            {!goals_loading && goals.length > 0 && goals[0].goal_variables.map((elt,i) =>(
-                                                <td key={i}>{Math.floor(calculate_avg(elt,Variables.get_last_week_monday_date,Variables.get_last_monday_date))} {elt.variable_prefix}</td>
-                                            ))}
-                                        </tr>
+            {/* LAST WEEK DATA */}  
+            <br /><hr className="hr-text mb-5 mt-5" data-content="LAST WEEK DATA" />
+            {!goals_loading && goals.length > 0 && date_difference(Variables.get_last_week_monday_date,Variables.get_last_monday_date) === 0 ? <h4>The week just started, there is nothing to show at the moment</h4> :
+                        check_data_existance(Variables.get_last_week_monday_date,Variables.get_last_monday_date) === false ? <h4>Some Data on the last week is missing, try go back and add all the missing data to access the analytics</h4> :
+                        <div className="row">
+                        <div className="col-12">
+                            <table className="bg-warning table table-bordered table-striped table-hover text-light">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        {!goals_loading && goals.length > 0 && goals[0].goal_variables.map((elt,key)=>(
+                                            <th key={key}>{elt.variable_name}</th>
+                                        ))}
+                                    </tr>
+                                    </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>AVG per day</td>
+                                        {!goals_loading && goals.length > 0 && goals[0].goal_variables.map((elt,i) =>(
+                                            <td key={i}>{Math.floor(calculate_avg(elt,Variables.get_last_week_monday_date,Variables.get_last_monday_date))} {elt.variable_prefix}</td>
+                                        ))}
+                                    </tr>
 
-                                        <tr>
-                                            <td>Total Last Week</td>
-                                            {!goals_loading && goals.length > 0 && goals[0].goal_variables.map((elt,i) =>(
-                                                <td key={i}>{calculate_sum(elt,Variables.get_last_week_monday_date,Variables.get_last_monday_date)} {elt.variable_prefix}</td>
-                                            ))}
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div className="col-12 mt-3" style={{padding : '0 200px'}}>
-                                {!goals_loading && goals.length > 0 && <Line data ={last_week_chart_data}/>}
-                            </div>
-                            </div>
-                        }
-            </div>
+                                    <tr>
+                                        <td>Total Last Week</td>
+                                        {!goals_loading && goals.length > 0 && goals[0].goal_variables.map((elt,i) =>(
+                                            <td key={i}>{calculate_sum(elt,Variables.get_last_week_monday_date,Variables.get_last_monday_date)} {elt.variable_prefix}</td>
+                                        ))}
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div className="col-12 mt-3" style={{padding : my_padding}}>
+                            <center>
+                            {!goals_loading && goals.length > 0 && window.innerWidth < 1024 && <Line options={{responsive:false}} data ={last_week_chart_data}/> }
+                            {!goals_loading && goals.length > 0 && window.innerWidth > 1024 && <Line options={{responsive:true}} data ={last_week_chart_data}/> }
+                            </center>
+                        </div>
+                        </div>
+                    }
+        </div>
+            }
         </div>
     )
 }

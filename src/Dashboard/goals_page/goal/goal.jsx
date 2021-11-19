@@ -87,6 +87,10 @@ const Goal = ({goal,goal_data_date}) => {
         return result;
     }
 
+    var classn_name_1 = 'd-flex';
+    var class_name_2 = 'mr-2 ml-2';
+    if(window.innerWidth < 1024){classn_name_1 = 'row pl-3 pr-3 pt-3';class_name_2 = 'col-12 mt-4'}
+
     //main render
     return (
         <div className='Goal jumbotron'>
@@ -102,9 +106,9 @@ const Goal = ({goal,goal_data_date}) => {
                         </DialogActions>
             </Dialog>
             <div className="title text-light">{goal.goal_name} <a href={`/analytics/${goal.goal_id}`} style={{fontSize:'12px'}}>Show Details</a></div>
-            <div className=" d-flex">
+            <div className={`${classn_name_1}`}>
                 {goal.goal_variables.map((elt) =>(
-                    <div key={elt.variable_id} className="card text-white text-center mb-3" style={{width:'100%',margin:'0px 10px'}}>
+                    <div key={elt.variable_id} className={`${class_name_2} card text-white text-center mb-3`} style={{width:'100%'}}>
                         <div className="card-header">{elt.variable_name} </div>
                         <div className="card-body">
                             <div className="card-title">
@@ -128,6 +132,8 @@ const Goal = ({goal,goal_data_date}) => {
                         </div>
                     </div>
                 ))}
+
+                
             </div>
         </div>
     )

@@ -1,7 +1,7 @@
 .Sidebar{
     border-right: 2px solid #504466;
     text-align: center;
-    width:5%;
+    width:6%;
     height:200vw;
 }
 
@@ -17,6 +17,13 @@
 
 .Sidebar i:hover{
     color:#463468;
+}
+
+.Sidebar .active{
+    background: #4d4064;
+    padding: 10px 10px;
+    border-radius: 10px;
+    width: 80%;
 }
 
 

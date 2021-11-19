@@ -1,6 +1,6 @@
 .Goal{
     background:url(https://1.bp.blogspot.com/-Wpc6EQdjui8/XXP_uaQsddI/AAAAAAAADL8/c7hMZ9QPRwcELvJVnBth3EA2wD_cVeIwwCLcBGAs/s1600/Flat_colorful_background.jpg)!important;
-    height:300px;
+    min-height:300px;
     background-size:cover!important;
     border-radius: 15px;
     box-shadow: 17px 17px 0px rgb(0 0 0 / 30%);
