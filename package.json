@@ -1,5 +1,6 @@
 {
   "name": "my_progress_app",
+  "homepage": "https://progressmyday.com",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
